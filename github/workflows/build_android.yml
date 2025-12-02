@@ -1,13 +1,16 @@
 name: Kivy Android Build
 
 on:
+  # تشغيل سير العمل عند رفع (push) أي تغييرات إلى فرع main
   push:
     branches: [ "main" ]
+  # تشغيل سير العمل عند إرسال طلب سحب (Pull Request)
   pull_request:
     branches: [ "main" ]
 
 jobs:
   build:
+    # سيتم تشغيل البناء على بيئة Linux (Ubuntu)
     runs-on: ubuntu-latest
     
     steps:
@@ -17,19 +20,25 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
+        # استخدام إصدار Python 3.10
         python-version: '3.10'
 
-    - name: Install Buildozer
+    - name: Install Buildozer and Cython 🛠️
       run: |
+        # تثبيت Buildozer
         pip install buildozer 
+        # تثبيت Cython لحل خطأ "Cython not found"
+        pip install cython 
 
     - name: Build Kivy App (This takes time)
+      # تشغيل أمر البناء الفعلي
       run: |
         buildozer android debug
 
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
       with:
+        # اسم الملف الذي سيتم حفظه على GitHub
         name: Android-APK-Release
+        # مسار ملف APK الناتج
         path: bin/*.apk
-        

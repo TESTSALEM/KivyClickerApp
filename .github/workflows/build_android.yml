@@ -20,27 +20,29 @@ jobs:
         python-version: '3.10'
 
     - name: Install System Dependencies 🏗️
-      # تثبيت متطلبات نظام Linux الأساسية لـ P4A
       run: |
         sudo apt update
         sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libblas-dev liblapack-dev libssl-dev build-essential lld
 
     - name: Prepare Python Environment
       run: |
-        # التأكد من تحديث أدوات بناء Python
         pip install --upgrade pip setuptools wheel
 
     - name: Install Buildozer and Cython
       run: |
         pip install --upgrade buildozer cython 
 
+    - name: Force Buildozer Clean (Mandatory Step) 🧹
+      # هذه الخطوة تجبر Buildozer على مسح الكاش وقراءة buildozer.spec الجديد بالكامل
+      run: |
+        buildozer android clean
+
     - name: Initialize and Accept SDK Licenses 🔑
-      # تحديث المكونات وقبول التراخيص (لحل مشكلة Aidl والترخيص)
+      # الآن، سيقوم هذا الأمر بتنزيل android.build_tools = 33.0.2 الذي حددناه في buildozer.spec
       run: |
         buildozer android update
 
     - name: Final Build Kivy App 🚀
-      # بدء البناء الفعلي
       run: |
         buildozer android debug
 
@@ -49,3 +51,4 @@ jobs:
       with:
         name: Android-APK-Release
         path: bin/*.apk
+        
